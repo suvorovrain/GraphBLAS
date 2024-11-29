@@ -133,6 +133,7 @@ typedef struct
 
     bool cpu_features_avx2 ;        // x86_64 with AVX2
     bool cpu_features_avx512f ;     // x86_64 with AVX512f
+    bool cpu_features_rvv ;         // RISC-V with RVV1.0
 
     //--------------------------------------------------------------------------
     // integer control
@@ -226,6 +227,7 @@ static GB_Global_struct GB_Global =
     // CPU features
     .cpu_features_avx2 = false,         // x86_64 with AVX2
     .cpu_features_avx512f = false,      // x86_64 with AVX512f
+    .cpu_features_rvv = false,          // RISC-V with RVV1.0
 
     // integer control
     .p_control = (int8_t) 32,
@@ -342,6 +344,7 @@ void GB_Global_cpu_features_query (void)
                 GB_Global.cpu_features_avx2 = false ;
             }
             #endif
+            
             #if defined ( GBAVX512F )
             {
                 // the build system asserts whether or not AVX512F is available
@@ -353,7 +356,28 @@ void GB_Global_cpu_features_query (void)
                 GB_Global.cpu_features_avx512f = false ;
             }
             #endif
+            
         }
+        #endif
+
+    }
+    #endif
+    #if GBRISCV64
+    {
+        //----------------------------------------------------------------------
+        // xRISC-V architecture: see if RVV1.0 is supported
+        //----------------------------------------------------------------------
+
+        #if defined ( GBRVV )
+        {
+                // the build system asserts whether or not RVV1.0 is available
+                GB_Global.cpu_features_rvv = (bool) (GBRVV) ;
+        }
+            #else
+            {
+                // RVV1.0 not available
+                GB_Global.cpu_features_rvv = false ;
+            }
         #endif
 
     }
@@ -361,11 +385,12 @@ void GB_Global_cpu_features_query (void)
     {
 
         //----------------------------------------------------------------------
-        // not on the x86_64 architecture, so no AVX2 or AVX512F acceleration
+        // not on the x86_64 or RISC-V architecture, so no AVX2, AVX512F or RVV1.0 acceleration
         //----------------------------------------------------------------------
 
         GB_Global.cpu_features_avx2 = false ;
         GB_Global.cpu_features_avx512f = false ;
+        GB_Global.cpu_features_rvv = false ;
 
     }
     #endif
@@ -379,6 +404,11 @@ bool GB_Global_cpu_features_avx2 (void)
 bool GB_Global_cpu_features_avx512f (void)
 { 
     return (GB_Global.cpu_features_avx512f) ;
+}
+
+bool GB_Global_cpu_features_rvv (void)
+{ 
+    return (GB_Global.cpu_features_rvv) ;
 }
 
 //------------------------------------------------------------------------------
