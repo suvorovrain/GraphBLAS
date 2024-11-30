@@ -201,8 +201,12 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
                 return (GrB_SUCCESS) ;
             }
             #endif
+        }
+        #endif
 
-             #if GB_COMPILER_SUPPORTS_RVV1
+        #if GB_SEMIRING_HAS_RVV_IMPLEMENTATION
+        {
+            #if GB_COMPILER_SUPPORTS_RVV1
             if (cpu_has_avx2)
             {
                 // RISC-V64 with RVV1.0
