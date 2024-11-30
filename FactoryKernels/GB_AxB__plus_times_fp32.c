@@ -49,6 +49,7 @@
 // special case semirings:
 
 #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
+#define GB_SEMIRING_HAS_RVV_IMPLEMENTATION 1
 
 // monoid properties:
 #define GB_Z_TYPE float
