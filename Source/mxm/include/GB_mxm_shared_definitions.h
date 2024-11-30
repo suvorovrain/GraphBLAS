@@ -71,6 +71,12 @@
 #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 0
 #endif
 
+//1 if the semiring has a RVV1.0 implementation
+#ifndef GB_SEMIRING_HAS_RVV_IMPLEMENTATION
+#define GB_SEMIRING_HAS_RVV_IMPLEMENTATION 0
+#endif
+
+
 //------------------------------------------------------------------------------
 // special multiply operators
 //------------------------------------------------------------------------------
