@@ -6,7 +6,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+#ifdef GBRISCV64
 #include <riscv_vector.h>
+#endif
 #include "GB.h"
 #include "GB_control.h"
 #if defined (GxB_NO_FP64)
