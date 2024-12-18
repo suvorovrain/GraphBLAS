@@ -361,8 +361,7 @@ void GB_Global_cpu_features_query (void)
         #endif
 
     }
-    #endif
-    #if GBRISCV64
+    #elif GBRISCV64
     {
         //----------------------------------------------------------------------
         // xRISC-V architecture: see if RVV1.0 is supported
