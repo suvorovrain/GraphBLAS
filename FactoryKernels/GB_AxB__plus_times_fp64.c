@@ -9,6 +9,7 @@
 #ifdef GBRISCV64
 #include <riscv_vector.h>
 #endif
+#include "stdio.h"
 #include "GB.h"
 #include "GB_control.h"
 #if defined (GxB_NO_FP64)
@@ -287,6 +288,7 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
                 const int64_t *B_slice
             )
             {
+                printf("avx2\n");
                 #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -308,6 +310,7 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
                 const int64_t *B_slice
             )
             {
+                printf("rvv\n");
                 #include "mxm/template/GB_AxB_saxpy5_lv.c"
             }
 
@@ -335,6 +338,7 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
             const int64_t *B_slice
         )
         {
+            printf("vanilla\n");
             #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
         }
 
