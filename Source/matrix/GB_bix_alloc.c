@@ -84,7 +84,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
         if (ok)
         { 
             // Ai [0] = 0
-            memset (A->i, 0, isize) ;
+            memset (A->i, 0, isize) ;   // FIXME: EVIL
         }
     }
 
