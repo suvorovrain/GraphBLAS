@@ -287,7 +287,6 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
                 const int64_t *B_slice
             )
             {
-                printf("avx2\n");
                 #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -309,7 +308,6 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
                 const int64_t *B_slice
             )
             {
-                printf("rvv\n");
                 #include "mxm/template/GB_AxB_saxpy5_lv.c"
             }
 
@@ -337,7 +335,6 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
             const int64_t *B_slice
         )
         {
-            printf("vanilla\n");
             #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
         }
 
