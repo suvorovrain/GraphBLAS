@@ -1,5 +1,5 @@
 {
-    const int64_t m = C->vlen; // # of rows of C and A
+    const int64_t m = C->vlen;
     const int64_t *restrict Bp = B->p;
     const int64_t *restrict Bh = B->h;
     const int64_t *restrict Bi = B->i;
@@ -22,33 +22,33 @@
             const int64_t pB_end = Bp[jB + 1];
             for (int64_t i = 0; i < m && (m - i) >= vl; i += vl)
             {
-                vfloat64m8_t vc = __riscv_vlse64_v_f64m8(Cxj + i, sizeof(double), vl);
+                vfloat64m8_t vc = __riscv_vle64_v_f64m8(Cxj + i, sizeof(double), vl);
 
                 for (int64_t pB = pB_start; pB < pB_end; pB++)
                 {
                     const int64_t k = Bi[pB];
                     const GB_B_TYPE bkj = Bx[pB];
-                    vfloat64m8_t va = __riscv_vlse64_v_f64m8(Ax + i + k * m, sizeof(double), vl);
+                    vfloat64m8_t va = __riscv_vle64_v_f64m8(Ax + i + k * m, sizeof(double), vl);
                     vc = __riscv_vfmacc_vf_f64m8(vc, bkj, va, vl);
                 }
 
-                __riscv_vsse64_v_f64m8(Cxj + i, sizeof(double), vc, vl);
+                __riscv_vse64_v_f64m8(Cxj + i, sizeof(double), vc, vl);
             }
             int64_t remaining = m % vl;
             if (remaining > 0)
             {
                 int64_t i = m - remaining;
-                vfloat64m8_t vc = __riscv_vlse64_v_f64m8(Cxj + i, sizeof(double), remaining);
+                vfloat64m8_t vc = __riscv_vle64_v_f64m8(Cxj + i, sizeof(double), remaining);
 
                 for (int64_t pB = pB_start; pB < pB_end; pB++)
                 {
                     const int64_t k = Bi[pB];
                     const GB_B_TYPE bkj = Bx[pB];
-                    vfloat64m8_t va = __riscv_vlse64_v_f64m8(Ax + i + k * m, sizeof(double), remaining);
+                    vfloat64m8_t va = __riscv_vle64_v_f64m8(Ax + i + k * m, sizeof(double), remaining);
                     vc = __riscv_vfmacc_vf_f64m8(vc, bkj, va, remaining);
                 }
 
-                __riscv_vsse64_v_f64m8(Cxj + i, sizeof(double), vc, remaining);
+                __riscv_vse64_v_f64m8(Cxj + i, sizeof(double), vc, remaining);
             }
         }
     }
