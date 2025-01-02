@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
 #ifdef GBRISCV64
 #include <riscv_vector.h>
 #endif
