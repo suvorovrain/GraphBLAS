@@ -2240,4 +2240,3 @@
    #define GxB_NO_TIMES_SECONDJ_INT64   1
    #define GxB_NO_TIMES_SECONDJ1_INT32  1
    #define GxB_NO_TIMES_SECONDJ1_INT64  1
-   
