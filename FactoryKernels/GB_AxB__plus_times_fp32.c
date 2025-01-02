@@ -9,7 +9,6 @@
 #ifdef GBRISCV64
 #include <riscv_vector.h>
 #endif
-#include "stdio.h"
 #include "GB.h"
 #include "GB_control.h"
 #if defined (GxB_NO_FP32)
@@ -308,7 +307,6 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp32)
                 const int64_t *B_slice
             )
             {
-                printf("riscvhype!\n");
                 #include "mxm/template/GB_AxB_saxpy5_lv.c"
             }
 
