@@ -344,7 +344,6 @@ void GB_Global_cpu_features_query (void)
                 GB_Global.cpu_features_avx2 = false ;
             }
             #endif
-            
             #if defined ( GBAVX512F )
             {
                 // the build system asserts whether or not AVX512F is available
@@ -356,7 +355,6 @@ void GB_Global_cpu_features_query (void)
                 GB_Global.cpu_features_avx512f = false ;
             }
             #endif
-            
         }
         #endif
 
