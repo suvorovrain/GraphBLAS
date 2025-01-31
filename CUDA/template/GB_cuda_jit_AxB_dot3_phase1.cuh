@@ -149,6 +149,8 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         GB_cuda_ek_slice_setup (Mp, mnvec, mnz, pfirst, chunk_size,
             &kfirst, &klast, &my_chunk_size, &mnvec1, &slope) ;
 
+this_thread_block().sync() ;    // NEW
+
         //----------------------------------------------------------------------
         // assign entries in C(i,j) to the buckets
         //----------------------------------------------------------------------
@@ -335,6 +337,8 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     int64_t *nanobucket =
         nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) + threadIdx.x ;
 
+this_thread_block().sync() ;    // NEW
+
     #pragma unroll
     for (int b = 0 ; b < NBUCKETS ; b++)
     {
@@ -351,6 +355,8 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         nanobucket [b * blockDim.x] = my_bucket[b] ;
     }
 
+    this_thread_block().sync() ;    // NEW
+
     // The last thread now has the sum of all nanobuckets, which is then saved
     // to the global bucket counts.   blockbucket is an array of size
     // NBUCKETS-by-gridDim.x, held by row, with one column per thread block.
@@ -365,5 +371,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
             blockbucket [b * gridDim.x + blockIdx.x] += my_bucket[b];
         }
     }
+
+    this_thread_block().sync() ;    // NEW
 }
 
