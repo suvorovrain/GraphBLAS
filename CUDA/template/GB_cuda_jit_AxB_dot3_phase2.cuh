@@ -60,7 +60,9 @@ __inline__ __device__ void blockBucketExclusiveSum
     // Have the block iterate over segments of items
     int64_t data = 0 ;
 
-    int64_t *blockbucket = d_data ;
+    int64_t *Blockbucket = d_data ;
+
+this_thread_block().sync() ;    // NEW
 
     for (int block_id = 0 ; block_id < nblocks ; block_id += blocksize)
     {
@@ -69,7 +71,7 @@ __inline__ __device__ void blockBucketExclusiveSum
         int loc = block_id + threadIdx.x;
         if (loc < nblocks)
         {
-            data = blockbucket [bucketId*nblocks + loc] ;
+            data = Blockbucket [bucketId*nblocks + loc] ;
         }
         this_thread_block().sync() ;
 
@@ -79,10 +81,11 @@ __inline__ __device__ void blockBucketExclusiveSum
 
         if (loc < nblocks)
         {
-            blockbucket [bucketId*nblocks + loc] = data ;
+            Blockbucket [bucketId*nblocks + loc] = data ;
         }
 
         // this_thread_block().sync();
+this_thread_block().sync() ;    // NEW
 
         data = 0 ;
     }
@@ -93,7 +96,7 @@ __inline__ __device__ void blockBucketExclusiveSum
 //------------------------------------------------------------------------------
 
 // GB_cuda_AxB__dot3_phase2 is a CUDA kernel that takes as input the
-// nanobuckets and blockbucket arrays computed by the first phase kernel,
+// Nanobucket and Blockbucket arrays computed by the first phase kernel,
 // GB_cuda_AxB__dot3_phase1.  The launch geometry of this kernel must match
 // the GB_cuda_AxB_dot3_phase1 kernel, with the same # of threads and
 // threadblocks.
@@ -101,7 +104,7 @@ __inline__ __device__ void blockBucketExclusiveSum
 __global__ void GB_cuda_AxB_dot3_phase2_kernel
 (
     // input, not modified:
-    int64_t *__restrict__ blockbucket,  // global bucket count,
+    int64_t *__restrict__ Blockbucket,  // global bucket count,
                                         // of size NBUCKETS*nblocks
     // output:
     int64_t *__restrict__ offset,       // global offsets, for each bucket
@@ -115,8 +118,8 @@ __global__ void GB_cuda_AxB_dot3_phase2_kernel
     // sum up the bucket counts of prior threadblocks
     //--------------------------------------------------------------------------
 
-    // blockbucket is an array of size NBUCKETS-by-nblocks, held by row.  The
-    // entry blockbucket [bucket * nblocks + t] holds the # of entries
+    // Blockbucket is an array of size NBUCKETS-by-nblocks, held by row.  The
+    // entry Blockbucket [bucket * nblocks + t] holds the # of entries
     // in the bucket (in range 0 to NBUCKETS-1) found by threadblock t.
 
     uint64_t s [NBUCKETS] ;
@@ -136,12 +139,14 @@ __global__ void GB_cuda_AxB_dot3_phase2_kernel
               tid < nblocks ;
               tid += blockDim.x*gridDim.x)
         {
-            s [b] += blockbucket [b * nblocks + tid] ;
+            s [b] += Blockbucket [b * nblocks + tid] ;
         }
         this_thread_block().sync(); 
 
         s [b] = GB_cuda_tile_sum_uint64 (tile, s [b]) ;
      }
+
+this_thread_block().sync() ;    // NEW : e2
 
     if (threadIdx.x == 0)
     {
@@ -158,7 +163,7 @@ __global__ void GB_cuda_AxB_dot3_phase2_kernel
         // Cumulative sum across blocks for each bucket
         if (blockIdx.x <NBUCKETS)
         {
-            blockBucketExclusiveSum (blockIdx.x, blockbucket, nblocks) ;
+            blockBucketExclusiveSum (blockIdx.x, Blockbucket, nblocks) ;
         }
     }
     else
@@ -168,9 +173,10 @@ __global__ void GB_cuda_AxB_dot3_phase2_kernel
             #pragma unroll
             for (int b = 0 ; b < NBUCKETS ; b++)
             {
-                blockBucketExclusiveSum (b, blockbucket, nblocks) ;
+                blockBucketExclusiveSum (b, Blockbucket, nblocks) ;
             }
         }
     }
+this_thread_block().sync() ;    // NEW : f output
 }
 

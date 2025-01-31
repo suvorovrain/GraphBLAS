@@ -10,7 +10,7 @@
 
 // GB_jit_kernel_cuda_AxB_dot3: C<M>=A'*B using the dot3 method on the GPU.
 
-#define GB_DEBUG
+// #define GB_DEBUG
 
 #define GB_FREE_ALL ;
 
@@ -226,14 +226,15 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     // get problem size
     //--------------------------------------------------------------------------
 
+    printf ("number_of_sms %d\n", number_of_sms) ;
     const GB_M_NVALS (mnz) ;
     int nblks_1 = (mnz + chunk_size - 1) / chunk_size ;
     int number_of_blocks_1 = GB_IMIN (nblks_1,  chunk_size * number_of_sms) ;
 
     // most methods can use these launch geometries:
-    // printf ("\nmnz: %ld\n", mnz) ;
-    // printf ("number_of_blocks_1: %d\n", number_of_blocks_1) ;
-    // printf ("threads_per_block: %d\n", threads_per_block) ;
+       printf ("\nmnz: %ld\n", mnz) ;
+       printf ("number_of_blocks_1: %d\n", number_of_blocks_1) ;
+       printf ("threads_per_block: %d\n", threads_per_block) ;
     dim3 grid_1 (number_of_blocks_1) ;
     dim3 block (threads_per_block) ;
 
@@ -312,6 +313,9 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         int64_t blockbuckets_size = NBUCKETS * number_of_blocks_1 ;
         int64_t nanobuckets_size = blockbuckets_size * threads_per_block ;
 
+        printf ("blockbuckets_size: %ld\n", blockbuckets_size) ;
+        printf ("nanobuckets_size:  %ld\n", nanobuckets_size) ;
+
         Nanobuckets = GB_MALLOC_WORK (nanobuckets_size, int64_t, &Nb_size) ;
         Blockbucket = GB_MALLOC_WORK (blockbuckets_size, int64_t, &Bb_size) ;
         Bucketp = GB_MALLOC_WORK (NBUCKETS+1, int64_t, &Bup_size) ;
@@ -362,7 +366,11 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // kernel_timer.Start();
 
-        // printf ("\nLaunching sparse phase1:\n") ;
+        printf ("\nLaunching sparse phase1:\n") ;
+
+            fflush (stdout) ;
+            fflush (stderr) ;
+
         GB_jit_AxB_dot3_phase1_kernel <<<grid_1, block, 0, stream>>>
             (Nanobuckets, Blockbucket, C, M, A, B) ;
 
@@ -370,6 +378,32 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // kernel_timer.Stop();
         // printf ("(GPU phase1 %12.6g ms )\n", kernel_timer.Elapsed()) ;
+
+        printf ("\nDone sparse phase1:\n") ;
+ //         fflush (stdout) ;
+//          fflush (stderr) ;
+
+#if 1
+// HERE
+    int64_t gunk = 0 ;
+    for (int kk = 0 ; kk < nanobuckets_size-1 ; kk++)
+    {
+        gunk += GB_IMAX (0, Nanobuckets [kk+1] - Nanobuckets [kk]) ;
+        // printf ("Nanobucket [%d] = %ld\n", kk, Nanobuckets [kk]) ;
+    }
+    printf ("nano gunk %ld\n", gunk) ;
+
+// HERE
+    gunk = 0 ;
+    for (int kk = 0 ; kk < blockbuckets_size - 1 ; kk++)
+    {
+        gunk += GB_IMAX (0, Blockbucket [kk+1] - Blockbucket [kk]) ;
+        // printf ("Blockbucket [%d] = %ld\n", kk, Blockbucket [kk]) ;
+    }
+//          fflush (stdout) ;
+//          fflush (stderr) ;
+    printf ("block gunk %ld\n", gunk) ;
+#endif
 
         //----------------------------------------------------------------------
         // phase2: cumsum across the blockbuckets, propagate to thread level
@@ -383,7 +417,8 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // kernel_timer.Start();
 
-        // printf ("Launching sparse phase2:\n") ;
+        printf ("Launching sparse phase2:\n") ;
+        printf ("number_of_blocks_2: %d\n", number_of_blocks_2) ;
         GB_cuda_AxB_dot3_phase2_kernel <<<grid_2, block, 0, stream>>>
             (Blockbucket, offset, number_of_blocks_1) ;
 

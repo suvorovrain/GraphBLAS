@@ -1,4 +1,4 @@
-#define GB_DEBUG
+// #define GB_DEBUG
 
 #include "GB_cuda_select.hpp"
 
