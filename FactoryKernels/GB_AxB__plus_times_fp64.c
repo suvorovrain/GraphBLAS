@@ -24,6 +24,14 @@
 #include "assign/GB_bitmap_assign_methods.h"
 #include "FactoryKernels/GB_AxB__include2.h"
 
+// riscv intrinsics
+
+#define VSETVL(x) __riscv_vsetvl_e64m8(x)
+#define VLE(x,y) __riscv_vle64_v_f64m8(x, y)
+#define VFMACC(x,y,z,w) __riscv_vfmacc_vf_f64m8(x, y, z, w)
+#define VSE(x,y,z) __riscv_vse64_v_f64m8(x, y, z)
+#define VECTORTYPE vfloat64m8_t
+
 // semiring operators:
 #define GB_MULTADD(z,a,b,i,k,j) z += (a*b)
 #define GB_MULT(z,a,b,i,k,j)    z = (a*b)
@@ -295,7 +303,6 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
         //----------------------------------------------------------------------
         // saxpy5 method with RISC-V vectors
         //----------------------------------------------------------------------
-        
         #if GB_COMPILER_SUPPORTS_RVV1
 
             GB_TARGET_RVV1 static inline void GB_AxB_saxpy5_unrolled_rvv
