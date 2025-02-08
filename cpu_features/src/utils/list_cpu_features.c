@@ -35,6 +35,8 @@
 #include "cpuinfo_mips.h"
 #elif defined(CPU_FEATURES_ARCH_PPC)
 #include "cpuinfo_ppc.h"
+#elif defined(CPU_FEATURES_ARCH_RISCV)
+#include "cpuinfo_riscv.h"
 #endif
 
 // Design principles
