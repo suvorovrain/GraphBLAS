@@ -92,7 +92,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
 
         #if GB_COMPILER_SUPPORTS_RVV1
 
-            GB_TARGET_AVX2 static inline void GB_AxB_saxpy5_unrolled_rvv
+            GB_TARGET_RVV1 static inline void GB_AxB_saxpy5_unrolled_rvv
             (
                 GrB_Matrix C,
                 const GrB_Matrix A,
