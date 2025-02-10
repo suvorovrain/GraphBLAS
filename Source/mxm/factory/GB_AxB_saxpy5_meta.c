@@ -146,7 +146,7 @@
 
                 #if GB_SEMIRING_HAS_RVV_IMPLEMENTATION
                     #if GB_COMPILER_SUPPORTS_RVV1
-                    if (GB_Global_cpu_features_rvv ( ))
+                    if (GB_Global_cpu_features_rvv_1_0 ( ))
                     {
                         GB_AxB_saxpy5_unrolled_rvv (C, A, B,
                             ntasks, nthreads, B_slice) ;
