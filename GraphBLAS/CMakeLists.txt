@@ -2,7 +2,7 @@
 # GraphBLAS/GraphBLAS/CMakeLists.txt:  build GraphBLAS for use in MATLAB
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0.
 
 # CMakeLists.txt: instructions for cmake to build GraphBLAS for use in MATLAB.
@@ -121,32 +121,6 @@ if ( DEFINED GBAVX512F )
         set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=0 " )
     endif ( )
 endif ( )
-
-#-------------------------------------------------------------------------------
-# RISC-V 
-#-------------------------------------------------------------------------------
-
-if ( DEFINED GBRISCV64 )
-    if ( GBRISCV64 )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRISCV64=1 " )
-    else ( )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRISCV64=0 " )
-    endif ( )
-endif ( )
-
-if ( DEFINED GBRVV )
-    if ( GBRVV )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRVV=1 " )
-    else ( )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRVV=0 " )
-    endif ( )
-endif ( )
-
-#-------------------------------------------------------------------------------
-# check compiler features
-#-------------------------------------------------------------------------------
-
-include ( GraphBLAS_complex )
 
 #-------------------------------------------------------------------------------
 # determine build type
@@ -356,4 +330,3 @@ include ( GraphBLAS_JIT_configure )
 configure_file ( "../Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_config.h"
     NEWLINE_STYLE LF )
-
