@@ -10,7 +10,6 @@
 #ifdef GBRISCV64
 #include <riscv_vector.h>
 #endif
-#include "GB.h"
 #include "GB_control.h"
 GB_type_enabled
 #if GB_TYPE_ENABLED
