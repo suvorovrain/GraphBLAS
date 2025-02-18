@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef GBRISCV64
+#if __riscv
 #include <riscv_vector.h>
 #define VSETVL(x) __riscv_vsetvl_e32m8(x)
 #define VLE(x,y) __riscv_vle32_v_f32m8(x, y)

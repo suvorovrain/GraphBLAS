@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef GBRISCV64
+#if __riscv
 #include <riscv_vector.h>
 #define VSETVL(x) __riscv_vsetvl_e64m8(x)
 #define VLE(x,y) __riscv_vle64_v_f64m8(x, y)
@@ -15,6 +15,7 @@
 #define VSE(x,y,z) __riscv_vse64_v_f64m8(x, y, z)
 #define VECTORTYPE vfloat64m8_t
 #endif
+#include <stdio.h>
 #include "GB_control.h"
 #if defined (GxB_NO_FP64)
 #define GB_TYPE_ENABLED 0
@@ -312,6 +313,7 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
                 const int64_t *B_slice
             )
             {
+                printf("rvv\n");
                 #include "mxm/template/GB_AxB_saxpy5_lv.c"
             }
 
@@ -339,6 +341,7 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
             const int64_t *B_slice
         )
         {
+            printf("van\n");
             #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
         }
 
