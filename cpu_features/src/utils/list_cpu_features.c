@@ -423,6 +423,7 @@ static Node* CreateTree(void) {
   AddMapEntry(root, "microarchitecture",
               CreateString(strings.type.base_platform));
   AddFlags(root, &info.features);
+<<<<<<< HEAD
 #elif defined(CPU_FEATURES_ARCH_S390X)
   const S390XInfo info = GetS390XInfo();
   const S390XPlatformStrings strings = GetS390XPlatformStrings();
@@ -431,16 +432,22 @@ static Node* CreateTree(void) {
   AddMapEntry(root, "model", CreateString(strings.type.platform));
   AddMapEntry(root, "# processors", CreateInt(strings.num_processors));
   AddFlags(root, &info.features);
+=======
+>>>>>>> 2bc06c36d7 (fix: add missing riscv defines into cpu_features)
 #elif defined(CPU_FEATURES_ARCH_RISCV)
   const RiscvInfo info = GetRiscvInfo();
   AddMapEntry(root, "arch", CreateString("risc-v"));
   AddMapEntry(root, "vendor", CreateString(info.vendor));
   AddMapEntry(root, "microarchitecture", CreateString(info.uarch));
+<<<<<<< HEAD
   AddFlags(root, &info.features); 
 #elif defined(CPU_FEATURES_ARCH_LOONGARCH)
   const LoongArchInfo info = GetLoongArchInfo();
   AddMapEntry(root, "arch", CreateString("loongarch"));
   AddFlags(root, &info.features); 
+=======
+  AddFlags(root, &info.features);
+>>>>>>> 2bc06c36d7 (fix: add missing riscv defines into cpu_features)
 #endif
   return root;
 }
