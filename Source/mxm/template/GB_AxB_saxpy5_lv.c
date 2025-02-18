@@ -1,8 +1,9 @@
 {
     const int64_t m = C->vlen;
-    const int64_t *restrict Bp = B->p;
-    const int64_t *restrict Bh = B->h;
-    const int64_t *restrict Bi = B->i;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
+    const bool B_iso = B->iso ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *)A->x;
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *)B->x;
     size_t vl = VSETVL(m);
@@ -16,17 +17,18 @@
 
         for (int64_t jB = jB_start; jB < jB_end; jB++)
         {
-            const int64_t j = GBH_B(Bh, jB);
-            GB_C_TYPE *restrict Cxj = Cx + (j * m);
-            const int64_t pB_start = Bp[jB];
-            const int64_t pB_end = Bp[jB + 1];
+            const int64_t j = GBh_B (Bh, jB) ;
+            GB_C_TYPE *restrict Cxj = Cx + (j * m) ;
+            const int64_t pB_start = GB_IGET (Bp, jB) ;
+            const int64_t pB_end   = GB_IGET (Bp, jB+1) ;
             for (int64_t i = 0; i < m && (m - i) >= vl; i += vl)
             {
                 VECTORTYPE vc = VLE(Cxj + i, vl);
                 for (int64_t pB = pB_start; pB < pB_end; pB++)
                 {
-                    const int64_t k = Bi[pB];
-                    const GB_B_TYPE bkj = Bx[pB];
+                    const int64_t k = GB_IGET (Bi, pB) ;
+                    GB_DECLAREB (bkj) ;
+                    GB_GETB (bkj, Bx, pB, B_iso) ;
                     VECTORTYPE va = VLE(Ax + i + k * m, vl);
                     vc = VFMACC(vc, bkj, va, vl);
                 }
@@ -40,8 +42,9 @@
                 VECTORTYPE vc = VLE(Cxj + i, remaining);
                 for (int64_t pB = pB_start; pB < pB_end; pB++)
                 {
-                    const int64_t k = Bi[pB];
-                    const GB_B_TYPE bkj = Bx[pB];
+                    const int64_t k = GB_IGET (Bi, pB) ;
+                    GB_DECLAREB (bkj) ;
+                    GB_GETB (bkj, Bx, pB, B_iso) ;
                     VECTORTYPE va = VLE(Ax + i + k * m, remaining);
                     vc = VFMACC(vc, bkj, va, remaining);
                 }
