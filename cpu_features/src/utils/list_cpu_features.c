@@ -207,6 +207,9 @@ DEFINE_ADD_FLAGS(GetMipsFeaturesEnumValue, GetMipsFeaturesEnumName,
 #elif defined(CPU_FEATURES_ARCH_PPC)
 DEFINE_ADD_FLAGS(GetPPCFeaturesEnumValue, GetPPCFeaturesEnumName, PPCFeatures,
                  PPC_LAST_)
+#elif defined(CPU_FEATURES_ARCH_RISCV)
+DEFINE_ADD_FLAGS(GetRiscvFeaturesEnumValue, GetRiscvFeaturesEnumName,
+                 RiscvFeatures, RISCV_LAST_)
 #endif
 
 // Prints a json string with characters escaping.
@@ -411,6 +414,12 @@ static Node* CreateTree() {
   AddMapEntry(root, "instruction", CreateString(strings.type.platform));
   AddMapEntry(root, "microarchitecture",
               CreateString(strings.type.base_platform));
+  AddFlags(root, &info.features);
+#elif defined(CPU_FEATURES_ARCH_RISCV)
+  const RiscvInfo info = GetRiscvInfo();
+  AddMapEntry(root, "arch", CreateString("risc-v"));
+  AddMapEntry(root, "vendor", CreateString(info.vendor));
+  AddMapEntry(root, "microarchitecture", CreateString(info.uarch));
   AddFlags(root, &info.features);
 #endif
   return root;
