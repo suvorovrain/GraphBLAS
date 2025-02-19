@@ -361,20 +361,32 @@ void GB_Global_cpu_features_query (void)
     }
     #elif GBRISCV64
     {
+
         //----------------------------------------------------------------------
-        // xRISC-V architecture: see if RVV1.0 is supported
+        // RISC-V architecture: see if RVV1.0 is supported
         //----------------------------------------------------------------------
 
-        #if defined ( GBRVV )
+        #if !defined ( GBNCPUFEAT )
         {
+            // Google's cpu_features package is available: use run-time tests
+            RiscvFeatures features = GetRiscvInfo ().features ;
+            GB_Global.cpu_features_rvv_1_0 = (bool) (features.V) ;
+
+        }
+        #else
+        {
+            #if defined ( GBRVV )
+            {
                 // the build system asserts whether or not RVV1.0 is available
                 GB_Global.cpu_features_rvv_1_0 = (bool) (GBRVV) ;
-        }
+            }
             #else
             {
                 // RVV1.0 not available
                 GB_Global.cpu_features_rvv_1_0 = false ;
             }
+            #endif
+        }
         #endif
 
     }
