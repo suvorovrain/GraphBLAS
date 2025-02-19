@@ -7,14 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#if __riscv
-#include <riscv_vector.h>
-#define VSETVL(x) __riscv_vsetvl_e32m8(x)
-#define VLE(x,y) __riscv_vle32_v_f32m8(x, y)
-#define VFMACC(x,y,z,w) __riscv_vfmacc_vf_f32m8(x, y, z, w)
-#define VSE(x,y,z) __riscv_vse32_v_f32m8(x, y, z)
-#define VECTORTYPE vfloat32m8_t
-#endif
 #include "GB_control.h"
 #if defined (GxB_NO_FP32)
 #define GB_TYPE_ENABLED 0
@@ -302,6 +294,13 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp32)
         //---------------------------------------------------------------------
 
         #if GB_COMPILER_SUPPORTS_RVV1
+
+            #include <riscv_vector.h>
+            #define VSETVL(x) __riscv_vsetvl_e32m8(x)
+            #define VLE(x,y) __riscv_vle32_v_f32m8(x, y)
+            #define VFMACC(x,y,z,w) __riscv_vfmacc_vf_f32m8(x, y, z, w)
+            #define VSE(x,y,z) __riscv_vse32_v_f32m8(x, y, z)
+            #define VECTORTYPE vfloat32m8_t
 
             GB_TARGET_RVV1 static inline void GB_AxB_saxpy5_unrolled_rvv
             (

@@ -163,11 +163,12 @@ if ( DEFINED GBAVX512F )
 endif ( )
 
 #-------------------------------------------------------------------------------
-# RISC-V 
+# RISC-V
 #-------------------------------------------------------------------------------
 
 if ( DEFINED GBRISCV64 )
     if ( GBRISCV64 )
+    # default: this is detected automatically, but can be set here also
         set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRISCV64=1 " )
     else ( )
         set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRISCV64=0 " )
@@ -176,6 +177,7 @@ endif ( )
 
 if ( DEFINED GBRVV )
     if ( GBRVV )
+    # default: this is detected automatically, but can be set here also
         set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRVV=1 " )
     else ( )
         set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRVV=0 " )
