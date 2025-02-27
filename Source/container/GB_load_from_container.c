@@ -63,8 +63,6 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 
 //  A->nvec_nonempty = (A->is_csc) ?
 //      Container->ncols_nonempty : Container->nrows_nonempty ;
-//  printf ("nonempty %ld %ld\n",
-//      Container->ncols_nonempty , Container->nrows_nonempty) ;
     GB_nvec_nonempty_set (A, (A->is_csc) ?
         Container->ncols_nonempty : Container->nrows_nonempty) ;
 
