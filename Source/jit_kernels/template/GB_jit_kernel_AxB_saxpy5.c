@@ -92,6 +92,13 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
 
         #if GB_COMPILER_SUPPORTS_RVV1
 
+            #include <riscv_vector.h>
+            #define VSETVL(x) __riscv_vsetvl_e64m8(x)
+            #define VLE(x,y) __riscv_vle64_v_f64m8(x, y)
+            #define VFMACC(x,y,z,w) __riscv_vfmacc_vf_f64m8(x, y, z, w)
+            #define VSE(x,y,z) __riscv_vse64_v_f64m8(x, y, z)
+            #define VECTORTYPE vfloat64m8_t
+            
             GB_TARGET_RVV1 static inline void GB_AxB_saxpy5_unrolled_rvv
             (
                 GrB_Matrix C,

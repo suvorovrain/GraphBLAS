@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
+#include <stdio.h>
 #include "GB_control.h"
 #if defined (GxB_NO_FP64)
 #define GB_TYPE_ENABLED 0
@@ -284,6 +284,7 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
                 const int64_t *B_slice
             )
             {
+                printf("avx\n");
                 #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -312,6 +313,7 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
                 const int64_t *B_slice
             )
             {
+                printf("rvv\n");
                 #include "mxm/template/GB_AxB_saxpy5_lv.c"
             }
 
@@ -339,6 +341,7 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
             const int64_t *B_slice
         )
         {
+            printf("van\n");
             #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
         }
 
