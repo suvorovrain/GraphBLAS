@@ -288,7 +288,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     if (cnz == 0) {
         // C is empty; nothing more to do
-        printf ("C is empty, iso %d\n", C->iso) ;
+//      printf ("C is empty, iso %d\n", C->iso) ;
         GB_FREE_WORKSPACE ;
         return (GrB_SUCCESS) ;
     }
