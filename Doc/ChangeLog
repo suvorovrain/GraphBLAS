@@ -1,6 +1,7 @@
-Mar FIXME, 2025: version 10.x.x
+FIXME, 2025: version 10.0.3
 
     * upgrade xxHash to 0.8.3: contributed by Christoph Grueninger
+    * upgrade cpu_features to 0.9.0: contributed by Christoph Grueninger
 
 Mar 20, 2025: version 10.0.2
 
