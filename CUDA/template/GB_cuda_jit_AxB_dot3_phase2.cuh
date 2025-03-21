@@ -145,6 +145,15 @@ __global__ void GB_cuda_AxB_dot3_phase2_kernel
 
     if (threadIdx.x == 0)
     {
+        for (int b = 0 ; b < NBUCKETS ; b++)
+        {
+            printf ("block %d, s [%d] = %lu\n", blockIdx.x, b, s [b]) ;
+        } 
+    }
+
+
+    if (threadIdx.x == 0)
+    {
         #pragma unroll
         for (int b = 0 ; b < NBUCKETS ; b++)
         {
