@@ -91,25 +91,30 @@ end
 if (have_octave)
     % Octave does not have the new MEX classdef object and as of version 7, the
     % mex command doesn't handle compiler options the same way.
-    flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
+    if (ismac)
+        flags = [flags ' -std=c11 -Xclang -fopenmp -fPIC -Wno-pragmas' ] ;
+    else
+        flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
+    end
+else
+    % revise compiler flags for MATLAB
+    if (ismac)
+        cflags = '' ;
+        ldflags = '-fPIC' ;
+        rpath = '-rpath ' ;
+    elseif (isunix)
+        cflags = '-fopenmp' ;
+        ldflags = '-fopenmp -fPIC' ;
+        rpath = '-rpath=' ;
+    end
+    if (ismac || isunix)
+        rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, library_path) ;
+        flags = [ flags ' CFLAGS=''$CFLAGS ' cflags ' -Wno-pragmas'' '] ;
+        flags = [ flags ' CXXFLAGS=''$CXXFLAGS ' cflags ' -Wno-pragmas'' '] ;
+        flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
+    end
 end
 
-% revise compiler flags for MATLAB
-if (ismac)
-    cflags = '' ;
-    ldflags = '-fPIC' ;
-    rpath = '-rpath ' ;
-elseif (isunix)
-    cflags = '-fopenmp' ;
-    ldflags = '-fopenmp -fPIC' ;
-    rpath = '-rpath=' ;
-end
-if (ismac || isunix)
-    rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, library_path) ;
-    flags = [ flags ' CFLAGS=''$CFLAGS ' cflags ' -Wno-pragmas'' '] ;
-    flags = [ flags ' CXXFLAGS=''$CXXFLAGS ' cflags ' -Wno-pragmas'' '] ;
-    flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
-end
 
 if ispc
     % Windows

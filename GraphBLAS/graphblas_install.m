@@ -100,6 +100,9 @@ try
     clear mex
     fprintf ('\n================================\n%s\n', cmd1) ;
     [status, result] = system (cmd1, '-echo') ;
+    if (have_octave)
+        disp (result)
+    end
     if (status ~= 0)
         cd (here) ;
         error ('GrB:mex', 'GraphBLAS library not compiled') ;
@@ -108,6 +111,9 @@ try
     % execute cmd2: build the GraphBLAS library
     fprintf ('\n================================\n%s\n', cmd2) ;
     [status, result] = system (cmd2, '-echo') ;
+    if (have_octave)
+        disp (result)
+    end
     cd (here) ;
     if (status ~= 0)
         error ('GrB:mex', 'GraphBLAS library not compiled') ;
@@ -125,8 +131,12 @@ catch me
 end
 
 % build the GraphBLAS MATLAB interface
-cd '@GrB/private'
-gbmake
+try
+    cd '@GrB/private'
+    gbmake
+catch me
+    fprintf ('Building GraphBLAS @GrB interface failed\n') ;
+end
 
 cd (here) ;
 
