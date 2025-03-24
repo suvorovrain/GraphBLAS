@@ -216,9 +216,9 @@ for k = 1:length (cfiles)
     if (make_all || tc > tobj || htime > tobj)
         % compile the cfile
         % fprintf ('%s\n', cfile) ;
-        fprintf ('.') ;
+        % fprintf ('.') ;
         mexcmd = sprintf ('mex -c %s -silent %s ''%s''', flags, inc, cfile) ;
-        % fprintf ('%s\n', mexcmd) ;
+        fprintf ('%s\n', mexcmd) ;
         eval (mexcmd) ;
         any_c_compiled = true ;
     end
@@ -249,8 +249,8 @@ for k = 1:length (mexfunctions)
         % compile the mexFunction
         mexcmd = sprintf ('mex %s -silent %s %s ''%s'' %s %s', ...
             Lflags, flags, inc, mexfunction, objlist, libgraphblas) ;
-        % fprintf ('%s\n', mexcmd) ;
-        fprintf (':') ;
+        fprintf ('%s\n', mexcmd) ;
+        % fprintf (':') ;
         eval (mexcmd) ;
     end
 end
