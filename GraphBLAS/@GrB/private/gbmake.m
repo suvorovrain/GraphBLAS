@@ -9,18 +9,16 @@ function gbmake (what)
 % MATLAB 9.4 (R2018a) or Octave 7 later is required.
 %
 % For the Mac, the GraphBLAS library must be installed in /usr/local/lib/ as
-% libgraphblas_matlab.dylib.  It cannot be used where it is created in
-% ../build, because of the default Mac security settings.  For Unix/Linux, the
-% library used is ../build/libgraphblas_matlab.so if found, or in
-% /usr/local/lib if not found there.
+% libgraphblas_matlab.dylib (or just libgraphblas.dylib for Octave).  It cannot
+% be used where it is created in ../build, because of the default Mac security
+% settings.  For Unix/Linux, the library is ../build/libgraphblas_matlab.so if
+% found (or libgraphblas.so for Octave), or in /usr/local/lib if not found
+% there.
 %
 % See also mex, version, GrB.clear.
 %
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-fprintf ('Note: the libgraphblas_matlab dynamic library must already be\n') ;
-fprintf ('compiled prior to running this script.\n') ;
 
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 
@@ -30,6 +28,7 @@ if (have_octave)
     if verLessThan ('octave', '7')
         error ('GrB:mex', 'Octave 7 or later is required') ;
     end
+    library_name = 'libgraphblas' ;
 else
     if verLessThan ('matlab', '9.4')
         error ('GrB:mex', 'MATLAB 9.4 (R2018a) or later is required') ;
@@ -39,7 +38,11 @@ else
     % Earlier versions of MATLAB can use this renamed version too, so
     % for simplicity, use libgraphblas_matlab.so for all MATLAB versions.
     need_rename = true ;
+    library_name = 'libgraphblas_matlab' ;
 end
+
+fprintf ('Note: the %s dynamic library must already be\n', library_name) ;
+fprintf ('compiled and installed prior to running this script.\n') ;
 
 if (nargin < 1)
     what = '' ;
