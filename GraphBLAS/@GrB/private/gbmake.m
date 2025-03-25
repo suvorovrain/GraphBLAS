@@ -99,8 +99,10 @@ if (have_octave)
     else
         flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
     end
+    rpath = sprintf (' ''-Wl,-rpath=%s'' ', library_path) ;
+    flags = [flags rpath] ;
 else
-    % revise compiler flags for MATLAB
+    % revise compiler flags
     if (ismac)
         cflags = '' ;
         ldflags = '-fPIC' ;
@@ -117,7 +119,6 @@ else
         flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
     end
 end
-
 
 if ispc
     % Windows
@@ -164,6 +165,7 @@ catch
             flags, cflag) ;
         eval (mexcmd) ;
     catch me
+        me
         error ('C99 or MSVC complex support required') ;
     end
 end
