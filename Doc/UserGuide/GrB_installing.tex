@@ -115,6 +115,19 @@ tells you to use will differ depending on the platform:
 \noindent
 where \verb'/home/me/GraphBLAS' is your copy of GraphBLAS.
 
+You cannot use a single copy of the GraphBLAS source distribution to use in
+both MATLAB and Octave on the same system at the same time.  The \verb'*.o'
+files in \verb'GraphBLAS/GraphBLAS/@GrB/private' compiled by
+\verb'graphblas_install.m' will conflict with each other.  To switch between
+MATLAB and Octave, use a second copy of the GraphBLAS source distribution, or
+do a clean installation (via \verb'make purge' in the
+\verb'GraphBLAS/GraphBLAS/@GrB/private' folder) and redo the above
+instructions.  There is no need to recompile the \verb'libgraphblas.so' (or
+\verb'dylib' on the Mac) since Octave uses
+\verb'GraphBLAS/build/libgraphblas.so' while MATLAB  uses
+\verb'GraphBLAS/GraphBLAS//build/libgraphblas_matlab.so'.
+Both MATLAB and Octave can share the same compiled JIT kernels.
+
 %----------------------------------------
 \subsection{More details}
 %----------------------------------------
