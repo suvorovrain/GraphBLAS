@@ -24,7 +24,7 @@ have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 
 if (have_octave)
     % Octave can use the normal libgraphblas.so
-    need_rename = false ;
+    need_rename = 0 ;
     if verLessThan ('octave', '7')
         error ('GrB:mex', 'Octave 7 or later is required') ;
     end
@@ -37,7 +37,7 @@ else
     % that conflicts with this version, so rename this version.
     % Earlier versions of MATLAB can use this renamed version too, so
     % for simplicity, use libgraphblas_matlab.so for all MATLAB versions.
-    need_rename = true ;
+    need_rename = 1 ;
     library_name = 'libgraphblas_matlab' ;
 end
 
@@ -84,25 +84,33 @@ else
     %
     %   gbmake
     %
+    here = pwd ;
     if (need_rename)
-        library_path = sprintf ('%s/../../build', pwd) ;
+        cd ../../build
     else
-        library_path = sprintf ('%s/../../../build', pwd) ;
+        cd ../../../build
     end
+    library_path = pwd
+    cd (here) ;
 end
 
 if (have_octave)
+    % Revise compiler flags for Octave.
     % Octave does not have the new MEX classdef object and as of version 7, the
     % mex command doesn't handle compiler options the same way.
     if (ismac)
-        flags = [flags ' -std=c11 -Xclang -fopenmp -fPIC -Wno-pragmas' ] ;
+%       the mexFunctions themselves do not need OpenMP, and they can be hard
+%       to compile on the Mac
+%       flags = [flags ' -std=c11 -Xclang -fopenmp -fPIC -Wno-pragmas' ] ;
+        flags = [flags ' -std=c11 -fPIC -Wno-pragmas' ] ;
+        rpath = ' ' ;
     else
         flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
+        rpath = sprintf (' ''-Wl,-rpath=%s'' ', library_path) ;
     end
-    rpath = sprintf (' ''-Wl,-rpath=%s'' ', library_path) ;
     flags = [flags rpath] ;
 else
-    % revise compiler flags
+    % Revise compiler flags for MATLAB.
     if (ismac)
         cflags = '' ;
         ldflags = '-fPIC' ;
@@ -192,7 +200,7 @@ for k = 1:length (hfiles)
 end
 
 % compile any source files that need compiling
-any_c_compiled = false ;
+any_c_compiled = 0 ;
 objlist = '' ;
 for k = 1:length (cfiles)
 
@@ -218,11 +226,11 @@ for k = 1:length (cfiles)
     if (make_all || tc > tobj || htime > tobj)
         % compile the cfile
         % fprintf ('%s\n', cfile) ;
-        % fprintf ('.') ;
         mexcmd = sprintf ('mex -c %s -silent %s ''%s''', flags, inc, cfile) ;
-        fprintf ('%s\n', mexcmd) ;
+        % fprintf ('%s\n', mexcmd) ;
+        fprintf ('.') ;
         eval (mexcmd) ;
-        any_c_compiled = true ;
+        any_c_compiled = 1 ;
     end
 end
 
@@ -237,7 +245,8 @@ for k = 1:length (mexfunctions)
     tc = datenum (mexfunctions(k).date) ;
 
     % get the compiled mexFunction modification time
-    mexfunction_compiled = [ mexfunc(1:end-2) '.' mexext ] ;
+    mexfuncname = mexfunc (1:end-2) ;
+    mexfunction_compiled = [ mexfuncname '.' mexext ] ;
     dobj = dir (mexfunction_compiled) ;
     if (isempty (dobj))
         % there is no compiled mexFunction; it must be compiled
@@ -251,9 +260,16 @@ for k = 1:length (mexfunctions)
         % compile the mexFunction
         mexcmd = sprintf ('mex %s -silent %s %s ''%s'' %s %s', ...
             Lflags, flags, inc, mexfunction, objlist, libgraphblas) ;
-        fprintf ('%s\n', mexcmd) ;
-        % fprintf (':') ;
+        % fprintf ('%s\n', mexcmd) ;
+        fprintf (':') ;
         eval (mexcmd) ;
+
+        if (have_octave && ismac)
+            cmd = sprintf ('install_name_tool -add_rpath ''%s'' %s.mex', ...
+                library_path, mexfuncname) ;
+            % fprintf ('%s\n', cmd) ;
+            system (cmd) ;
+        end
     end
 end
 
