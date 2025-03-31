@@ -144,7 +144,7 @@ catch me
     fprintf ('\n    cd %s\n    %s\n    %s\n', build_folder, cmd1, cmd2) ;
     cd (here) ;
 
-    fprintf ('\nThen do this inside MATLAB:\n\n') ;
+    fprintf ('\nThen do this inside MATLAB/Octave:\n\n') ;
     fprintf ('    cd %s/@GrB/private\n    gbmake\n', here) ;
     return ;
 end
