@@ -278,24 +278,25 @@ fprintf ('\n') ;
 fprintf ('Compilation of the @GrB interface to GraphBLAS is complete.\n') ;
 fprintf ('Add the following commands to your startup.m file:\n\n') ;
 here1 = cd ('../..') ;
-addpath (pwd) ;
-fprintf ('  addpath (''%s'') ;\n', pwd) ;
+here2 = pwd ;
+addpath (here2) ;
+fprintf ('  addpath (''%s'') ;\n', here2) ;
 cd ('..') ;
 if (need_rename)
     cd ('GraphBLAS') ;
 end
 if ispc
-    lib_path = sprintf ('%s/build/Release', pwd) ;
+    lib_path = sprintf ('%s/build/Release', here2) ;
     fprintf ('  addpath (''%s'') ;\n', lib_path) ;
     addpath (lib_path) ;
 end
 cd (here1) ;
 
 fprintf ('\nFor a quick demo of GraphBLAS, type the following commands:\n\n') ;
-fprintf ('  cd ../../demo\n') ;
+fprintf ('  cd %s/demo\n', here2) ;
 fprintf ('  gbdemo\n') ;
 
 fprintf ('\nTo test GraphBLAS, type the following commands:\n\n') ;
-fprintf ('  cd ../../test\n') ;
+fprintf ('  cd %s/test\n', here2) ;
 fprintf ('  gbtest\n') ;
 
