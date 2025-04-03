@@ -234,9 +234,14 @@ for k = 1:length (cfiles)
     end
 end
 
-mexfunctions = dir ('mexfunctions/*.c') ;
-
 % compile the mexFunctions
+
+if (have_octave)
+    fprintf ('Building GrB mexFunctions for Octave.\n') ;
+    fprintf ('Ignore ''ld:warning: duplicate -bunder_loader option...\n\n') ;
+end
+
+mexfunctions = dir ('mexfunctions/*.c') ;
 for k = 1:length (mexfunctions)
 
     % get the mexFunction filename and modification time

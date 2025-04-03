@@ -62,11 +62,20 @@ static inline void gb_wrapup (void)
 
 #define CHECK_ERROR(error,message) if (error) ERROR (message) ;
 
+#define CHECK_JIT_ERROR(this_info)                          \
+{                                                           \
+    if (this_info == GxB_JIT_ERROR)                         \
+    {                                                       \
+        ERROR ("GraphBLAS JIT compiler error") ;            \
+    }                                                       \
+}
+
 #define OK(method)                                          \
 {                                                           \
     GrB_Info this_info = method ;                           \
     if (this_info != GrB_SUCCESS)                           \
     {                                                       \
+        CHECK_JIT_ERROR (this_info) ;                       \
         ERROR (gb_error_string (this_info)) ;               \
     }                                                       \
 }
@@ -76,6 +85,7 @@ static inline void gb_wrapup (void)
     GrB_Info this_info = method ;                                   \
     if (!(this_info == GrB_SUCCESS || this_info == GrB_NO_VALUE))   \
     {                                                               \
+        CHECK_JIT_ERROR (this_info) ;                               \
         ERROR (gb_error_string (this_info)) ;                       \
     }                                                               \
 }
@@ -85,6 +95,7 @@ static inline void gb_wrapup (void)
     GrB_Info this_info = method ;                           \
     if (this_info != GrB_SUCCESS)                           \
     {                                                       \
+        CHECK_JIT_ERROR (this_info) ;                       \
         const char *message ;                               \
         GrB_Matrix_error (&message, C) ;                    \
         ERROR (message) ;                                   \
