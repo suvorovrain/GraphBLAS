@@ -230,9 +230,9 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     int number_of_blocks_1 = GB_IMIN (nblks_1,  chunk_size * number_of_sms) ;
 
     // most methods can use these launch geometries:
-    // printf ("\nmnz: %ld\n", mnz) ;
-    // printf ("number_of_blocks_1: %d\n", number_of_blocks_1) ;
-    // printf ("threads_per_block: %d\n", threads_per_block) ;
+    printf ("\nmnz: %ld\n", mnz) ;
+    printf ("number_of_blocks_1: %d\n", number_of_blocks_1) ;
+    printf ("threads_per_block: %d\n", threads_per_block) ;
     dim3 grid_1 (number_of_blocks_1) ;
     dim3 block (threads_per_block) ;
 
@@ -320,8 +320,8 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         offset = (int64_t *) GB_MALLOC_MEMORY (NBUCKETS+1, sizeof (int64_t), &O_size) ;
         Bucket = (int64_t *) GB_MALLOC_MEMORY (mnz, sizeof (int64_t), &Bu_size) ;
 
-        memset (offset, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
-        memset (Bucketp, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
+//      memset (offset, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
+//      memset (Bucketp, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
 
         if (Nanobuckets == NULL || Blockbucket == NULL || Bucketp == NULL
             || Bucket == NULL || offset == NULL)
@@ -333,30 +333,24 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // FIXME: do async with streams
         // FIXME: do we need any of these?
-        //CUDA_OK (cudaMemsetAsync(Nanobuckets, 0,
-        //    nanobuckets_size * sizeof(int64_t), stream));
-        //CUDA_OK (cudaMemsetAsync(Blockbucket, 0,
-        //    blockbuckets_size * sizeof(int64_t), stream));
-        CUDA_OK (cudaMemsetAsync(Bucketp, 0,
-            (NBUCKETS+1) * sizeof(int64_t), stream));
-        CUDA_OK (cudaMemsetAsync(offset, 0,
-            NBUCKETS * sizeof(int64_t), stream));
-        //CUDA_OK (cudaMemsetAsync(Bucket, 0,
-        //    mnz * sizeof(int64_t), stream));
+        CUDA_OK (cudaMemsetAsync(Nanobuckets, 0, nanobuckets_size * sizeof(int64_t), stream));
+        CUDA_OK (cudaMemsetAsync(Blockbucket, 0, blockbuckets_size * sizeof(int64_t), stream));
+        CUDA_OK (cudaMemsetAsync(Bucketp, 0, (NBUCKETS+1) * sizeof(int64_t), stream));
+        CUDA_OK (cudaMemsetAsync(offset, 0, (NBUCKETS+1) * sizeof(int64_t), stream));
+        CUDA_OK (cudaMemsetAsync(Bucket, 0, mnz * sizeof(int64_t), stream));
 
         //----------------------------------------------------------------------
         // phase1 and phase2: place each C(i,j) in a bucket
         //----------------------------------------------------------------------
 
-        CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t),
-            cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
-        CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t),
-            cudaMemAdviseSetAccessedBy, device));
+        CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
+        CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
 
-        CUDA_OK (cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t),
-            cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
-        CUDA_OK (cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t),
-            cudaMemAdviseSetAccessedBy, device));
+        CUDA_OK (cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
+        CUDA_OK (cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
+
+        CUDA_OK (cudaGetLastError ( )) ;
+        CUDA_OK (cudaStreamSynchronize (stream)) ;
 
         //----------------------------------------------------------------------
         // phase1: assign each C(i,j) to a bucket, and count them
@@ -373,6 +367,18 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // kernel_timer.Stop();
         // printf ("(GPU phase1 %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
+#if 0
+        printf ("Blockbucket [%d] = {\n", NBUCKETS * number_of_blocks_1) ;
+        for (int b = 0 ; b < NBUCKETS ; b++)
+        {
+            for (int k = 0 ; k < number_of_blocks_1 ; k++)
+            {
+                printf ("  %ld,\n", Blockbucket [b * number_of_blocks_1 + k]) ;
+            }
+        }
+        printf ("};\n") ;
+#endif
+
         //----------------------------------------------------------------------
         // phase2: cumsum across the blockbuckets, propagate to thread level
         //----------------------------------------------------------------------
@@ -381,6 +387,8 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         int number_of_blocks_2 = (number_of_blocks_1 + threads_per_block - 1)
             / threads_per_block ;
 
+//      number_of_blocks_2 = 1 ;
+        printf ("number_of_blocks_2: %d\n", number_of_blocks_2) ;
         dim3 grid_2 (number_of_blocks_2) ;
 
         // kernel_timer.Start();
