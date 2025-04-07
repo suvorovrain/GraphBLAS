@@ -48,34 +48,25 @@ static inline void gb_wrapup (void)
     }
 }
 
-#define ERROR2(message, arg)                                \
+#define ERROR2(errmsg, arg)                                 \
 {                                                           \
     GBCOV_PUT ;                                             \
-    mexErrMsgIdAndTxt ("GrB:error", message, arg) ;         \
+    mexErrMsgIdAndTxt ("GrB:error", errmsg, arg) ;          \
 }
 
-#define ERROR(message)                                      \
+#define ERROR(errmsg)                                       \
 {                                                           \
     GBCOV_PUT ;                                             \
-    mexErrMsgIdAndTxt ("GrB:error", message) ;              \
+    mexErrMsgIdAndTxt ("GrB:error", errmsg) ;               \
 }
 
-#define CHECK_ERROR(error,message) if (error) ERROR (message) ;
-
-#define CHECK_JIT_ERROR(this_info)                          \
-{                                                           \
-    if (this_info == GxB_JIT_ERROR)                         \
-    {                                                       \
-        ERROR ("GraphBLAS JIT compiler error") ;            \
-    }                                                       \
-}
+#define CHECK_ERROR(error,errmsg) if (error) ERROR (errmsg) ;
 
 #define OK(method)                                          \
 {                                                           \
     GrB_Info this_info = method ;                           \
     if (this_info != GrB_SUCCESS)                           \
     {                                                       \
-        CHECK_JIT_ERROR (this_info) ;                       \
         ERROR (gb_error_string (this_info)) ;               \
     }                                                       \
 }
@@ -85,21 +76,21 @@ static inline void gb_wrapup (void)
     GrB_Info this_info = method ;                                   \
     if (!(this_info == GrB_SUCCESS || this_info == GrB_NO_VALUE))   \
     {                                                               \
-        CHECK_JIT_ERROR (this_info) ;                               \
         ERROR (gb_error_string (this_info)) ;                       \
     }                                                               \
 }
 
-#define OK1(C,method)                                       \
-{                                                           \
-    GrB_Info this_info = method ;                           \
-    if (this_info != GrB_SUCCESS)                           \
-    {                                                       \
-        CHECK_JIT_ERROR (this_info) ;                       \
-        const char *message ;                               \
-        GrB_Matrix_error (&message, C) ;                    \
-        ERROR (message) ;                                   \
-    }                                                       \
+#define OK1(C,method)                                               \
+{                                                                   \
+    GrB_Info this_info = method ;                                   \
+    if (this_info != GrB_SUCCESS)                                   \
+    {                                                               \
+        const char *err1 = gb_error_string (this_info) ;            \
+        printf ("%s\n", err1) ;                                     \
+        const char *err2 ;                                          \
+        GrB_Matrix_error (&err2, C) ;                               \
+        ERROR ((err2 == NULL || err2 [0] == '\0') ? err1 : err2) ;  \
+    }                                                               \
 }
 
 //------------------------------------------------------------------------------
