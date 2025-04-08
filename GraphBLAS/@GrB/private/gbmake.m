@@ -237,7 +237,7 @@ end
 % compile the mexFunctions
 
 if (have_octave)
-    fprintf ('Building GrB mexFunctions for Octave.\n') ;
+    fprintf ('\nBuilding GrB mexFunctions for Octave.\n') ;
     if (ismac)
         fprintf ('Ignore any ''ld:warning: duplicate -bunder_loader option'' warnings.\n\n') ;
     end
