@@ -41,7 +41,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 (
     // outputs, preallocated in global memory:
     int64_t *nanobuckets,   // array of size NBUCKETS-blockDim.x-by-gridDim.x
-    int64_t *blockbucket,   // bucket counts, of size NBUCKETS-by-gridDim.x
+    int64_t *Blockbucket,   // bucket counts, of size NBUCKETS-by-(gridDim.x+1)
     // input/output:
     GrB_Matrix C,           // final output matrix
     // inputs, not modified:
@@ -138,7 +138,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         // pfirst + my_chunk_size - 1.
         int64_t my_chunk_size, mnvec1, kfirst, klast ;
         float slope ;
-        GB_cuda_ek_slice_setup (Mp, mnvec, mnz, pfirst, chunk_size,
+        GB_cuda_ek_slice_setup<GB_Mp_TYPE> (Mp, mnvec, mnz, pfirst, chunk_size,
             &kfirst, &klast, &my_chunk_size, &mnvec1, &slope) ;
 
         //----------------------------------------------------------------------
@@ -158,7 +158,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
             // get the pM and k value of Mi,Mx [pM]
             int64_t pM ;    // = pfirst + pdelta
-            int64_t k = GB_cuda_ek_slice_entry (&pM, pdelta, pfirst, Mp, mnvec1,
+            int64_t k = GB_cuda_ek_slice_entry<GB_Mp_TYPE> (&pM, pdelta, pfirst, Mp, mnvec1,
                 kfirst, slope) ;
 
             //------------------------------------------------------------------
@@ -332,7 +332,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     {
         if ( threadIdx.x == blockDim.x-1)
         {
-            blockbucket [blockIdx.x + b * gridDim.x] = my_bucket[b] ;
+            Blockbucket [blockIdx.x + b * (gridDim.x+1)] = my_bucket[b] ;
         }
         this_thread_block().sync() ;
 
@@ -344,17 +344,18 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     }
 
     // The last thread now has the sum of all nanobuckets, which is then saved
-    // to the global bucket counts.   blockbucket is an array of size
-    // NBUCKETS-by-gridDim.x, held by row, with one column per thread block.
-    // The last thread saves its result in the column of this thread block.
-    // Note that this write to global memory is not coalesced.
+    // to the global bucket counts.   Blockbucket is an array of size
+    // NBUCKETS-by-(gridDim.x+1), held by row, with one column per thread block
+    // and a last column that will hold the total of each row (computed by
+    // phase2).  The last thread saves its result in the column of this thread
+    // block.  Note that this write to global memory is not coalesced.
 
     if (threadIdx.x == blockDim.x - 1 )
     {
         #pragma unroll
         for (int b = 0; b < NBUCKETS; ++b)
         {
-            blockbucket [b * gridDim.x + blockIdx.x] += my_bucket[b];
+            Blockbucket [blockIdx.x + b * (gridDim.x+1)] += my_bucket[b] ;
         }
     }
 }
