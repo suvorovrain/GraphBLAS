@@ -45,8 +45,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
-    ASSERT_MATRIX_OK (A, "A for shallow_op", GB5) ;
-    ASSERT_OP_OK (op, "unop/binop for shallow_op", GB5) ;
+    ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
+    ASSERT_OP_OK (op, "unop/binop for shallow_op", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -58,7 +58,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
 
     if (GB_IS_UNARYOP_CODE (opcode))
     {
-        ASSERT_OP_OK (op, "unop for shallow_op", GB5) ;
+        ASSERT_OP_OK (op, "unop for shallow_op", GB0) ;
         if (!GB_IS_BUILTIN_UNOP_CODE_POSITIONAL (opcode))
         { 
             ASSERT (GB_Type_compatible (op->xtype, A->type)) ;
@@ -67,7 +67,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     }
     else if (GB_IS_BINARYOP_CODE (opcode))
     {
-        ASSERT_OP_OK (op, "binop for shallow_op", GB5) ;
+        ASSERT_OP_OK (op, "binop for shallow_op", GB0) ;
         if (!GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
         { 
             op_intype = (binop_bind1st) ? op->xtype : op->ytype ;
@@ -76,7 +76,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     }
     else // GB_IS_INDEXUNARYOP_CODE (opcode)
     { 
-        ASSERT_OP_OK (op, "ixdunop for shallow_op", GB5) ;
+        ASSERT_OP_OK (op, "ixdunop for shallow_op", GB0) ;
         op_intype = op->xtype ;
         ASSERT (GB_Type_compatible (op_intype, A->type)) ;
     }
@@ -146,7 +146,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         C->x_shallow = false ;
         C->jumbled = false ;
         C->iso = false ;
-        ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB5) ;
+        ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
         return (GrB_SUCCESS) ;
     }
 
@@ -177,7 +177,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         C->x_shallow = true ;       // C->x will not be freed when freeing C
         C->x_size = A->x_size ;
         C->iso = A->iso ;           // C has the same iso property as A
-        ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB5) ;
+        ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB0) ;
         return (GrB_SUCCESS) ;
     }
 
@@ -203,7 +203,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // return the result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C = shallow (op (A))", GB5) ;
+    ASSERT_MATRIX_OK (C, "C = shallow (op (A))", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

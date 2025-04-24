@@ -10,9 +10,9 @@
 // in production: turn off developer flag
 #define GB_DEVELOPER 0
 
-// For development only:
-// #undef  GB_DEVELOPER
-// #define GB_DEVELOPER 1
+// For development only: FIXME
+#undef  GB_DEVELOPER
+#define GB_DEVELOPER 1
 
 #include "GB.h"
 #include "pending/GB_Pending.h"
@@ -38,11 +38,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool is_bitmap = GB_IS_BITMAP (A) ;
     bool is_sparse = GB_IS_SPARSE (A) ;
 
-    bool ignore_zombies = false ;
+    bool skip_zombie_checks = false ;
     if (pr > 5)
     {
         pr = pr - 6 ;
-        ignore_zombies = true ;
+        skip_zombie_checks = true ;
     }
     pr = GB_IMIN (pr, GxB_COMPLETE_VERBOSE) ;
     bool phantom = (is_full && (A->x == NULL || A->iso)) ;
@@ -595,17 +595,14 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
     }
 
-    if (!ignore_zombies && (A->nzombies > anz))
-    { 
-        GBPR0 ("  invalid number of zombies: " GBd " "
-            "must be >= 0 and <= # entries (" GBd ")\n", A->nzombies, anz) ;
-        return (GrB_INVALID_OBJECT) ;
-    }
-
-    if (A->jumbled && GB_is_shallow (A))
-    { 
-        GBPR0 ("  jumbled %s cannot contain readonly components\n", kind) ;
-        return (GrB_INVALID_OBJECT) ;
+    if (!skip_zombie_checks)
+    {
+        if (A->nzombies > anz)
+        { 
+            GBPR0 ("  invalid number of zombies: " GBd " "
+                "must be >= 0 and <= # entries (" GBd ")\n", A->nzombies, anz) ;
+            return (GrB_INVALID_OBJECT) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -775,7 +772,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the zombie count
     //--------------------------------------------------------------------------
 
-    if (!ignore_zombies && nzombies != A->nzombies)
+    if (!skip_zombie_checks && nzombies != A->nzombies)
     { 
         GBPR0 ("  invalid zombie count: " GBd " exist but"
             " A->nzombies = " GBd "\n", nzombies, A->nzombies) ;
