@@ -122,7 +122,6 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     #pragma omp parallel for num_threads(nthreads) schedule(static,1)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
-// printf ("\n============== Taskid: %d of %d\n", taskid, ntasks) ;
 
         //----------------------------------------------------------------------
         // get the task descriptor
@@ -133,7 +132,6 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
 
         if (taskid < nfine)
         {
-// printf ("fine task\n") ;
 
             //------------------------------------------------------------------
             // no work for fine tasks in phase1 if M is not present
@@ -209,7 +207,6 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                         Hf = (uint64_t *restrict) SaxpyTasks [taskid].Hf ;
                     uint64_t hash_bits = (hash_size-1) ;
                     // scan this task's M(:,j)
-// printf ("mystart %ld myend %ld\n", mystart, myend) ;
                     for (int64_t pM = mystart ; pM < myend ; pM++)
                     {
                         GB_GET_M_ij (pM) ;              // get M(i,j)
@@ -221,8 +218,8 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                             uint64_t hf ;
                             // swap this task's hash entry into the hash table;
                             // does the following using an atomic capture:
-                            // FIXME: atomic capture fails with gcc 14.2.0 on the IBM Power8!
-                            // It works with clang 18.1.8 on the same system.
+// FIXME: atomic capture fails with gcc 14.2.0 on the IBM Power8!
+// It works with clang 18.1.8 on the same system.
 // this works (with one thread):
                             // { hf = Hf [hash] ; Hf [hash] = i_mine ; }
 // this fails:

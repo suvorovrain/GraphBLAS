@@ -165,9 +165,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     int64_t nvec_nonempty = GB_nvec_nonempty_get (A) ;
     int64_t actual_nvec_nonempty = GB_nvec_nonempty (A) ;
+    int64_t nnz_max = GB_nnz_max (A) ;
 
     #if GB_DEVELOPER
-    GBPR0 ("  max # entries: " GBd "\n", GB_nnz_max (A)) ;
+    GBPR0 ("  max # entries: " GBd "\n", nnz_max) ;
     GBPR0 ("  vlen: " GBd , A->vlen) ;
     GBPR0 ("  vdim: " GBd "\n", A->vlen) ;
     if (nvec_nonempty != -1)
@@ -543,6 +544,17 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             if (info != GrB_SUCCESS) return (info) ;
         }
         GBPR0 ("\n") ;
+    }
+
+    //--------------------------------------------------------------------------
+    // check the # of entries
+    //--------------------------------------------------------------------------
+
+    if (!(A->iso) && anz > nnz_max)
+    {
+        GBPR0 ("\nentries: " GBd " max entries: " GBd " (invalid)\n",
+            anz, nnz_max) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     //--------------------------------------------------------------------------
