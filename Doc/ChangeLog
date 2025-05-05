@@ -1,4 +1,4 @@
-May 8, 2025: version 10.0.5
+May 5, 2025: version 10.0.5
 
     * revised cmake build system
     * (64) bug fix: GrB_assign, C<M>+=A, method 08n, when A is full.
