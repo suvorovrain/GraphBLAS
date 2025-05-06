@@ -66,16 +66,10 @@
 #define GB_IS_MAX_FIRSTJ_SEMIRING 0
 #endif
 
-// 1 if the semiring has an AVX512 or AVX2 implementation
+// 1 if the semiring has an AVX512, AVX2, or RVV1.0 implementation
 #ifndef GB_SEMIRING_HAS_AVX_IMPLEMENTATION
 #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 0
 #endif
-
-//1 if the semiring has a RVV1.0 implementation
-#ifndef GB_SEMIRING_HAS_RVV_IMPLEMENTATION
-#define GB_SEMIRING_HAS_RVV_IMPLEMENTATION 0
-#endif
-
 
 //------------------------------------------------------------------------------
 // special multiply operators

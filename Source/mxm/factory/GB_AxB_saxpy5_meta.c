@@ -142,9 +142,6 @@
                         return (GrB_SUCCESS) ;
                     }
                     #endif
-                #endif
-
-                #if GB_SEMIRING_HAS_RVV_IMPLEMENTATION
                     #if GB_COMPILER_SUPPORTS_RVV1
                     if (GB_Global_cpu_features_rvv_1_0 ( ))
                     {

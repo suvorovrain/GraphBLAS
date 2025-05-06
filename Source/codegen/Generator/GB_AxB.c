@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef GBRISCV64
-#include <riscv_vector.h>
-#endif
 #include "GB_control.h"
 GB_type_enabled
 #if GB_TYPE_ENABLED
@@ -313,12 +310,14 @@ m4_divert(if_semiring_has_avx)
             }
 
         #endif
-m4_divert(if_semiring_has_rvv)
+
         //----------------------------------------------------------------------
         // saxpy5 method with RISC-V vectors
         //----------------------------------------------------------------------
 
         #if GB_COMPILER_SUPPORTS_RVV1
+
+            #include <riscv_vector.h>
 
             GB_TARGET_RVV1 static inline void GB_AxB_saxpy5_unrolled_rvv
             (

@@ -8,9 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "include/GB_AxB_saxpy3_template.h"
-#ifdef GBRISCV64
-#include <riscv_vector.h>
-#endif
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
 
@@ -91,6 +88,8 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
         //----------------------------------------------------------------------
 
         #if GB_COMPILER_SUPPORTS_RVV1
+
+            #include <riscv_vector.h>
 
             GB_TARGET_RVV1 static inline void GB_AxB_saxpy5_unrolled_rvv
             (
@@ -193,13 +192,9 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
                 return (GrB_SUCCESS) ;
             }
             #endif
-        }
-        #endif
 
-        #if GB_SEMIRING_HAS_RVV_IMPLEMENTATION
-        {
             #if GB_COMPILER_SUPPORTS_RVV1
-            if (cpu_has_avx2)
+            if (cpu_has_rvv1)
             {
                 // RISC-V64 with RVV1.0
                 GB_AxB_saxpy5_unrolled_rvv (C, A, B, ntasks, nthreads,
