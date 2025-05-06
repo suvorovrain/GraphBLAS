@@ -49,6 +49,7 @@
 // special case semirings:
 
 #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
+#define GB_SEMIRING_HAS_RVV_IMPLEMENTATION 1
 
 // monoid properties:
 #define GB_Z_TYPE double
@@ -283,6 +284,34 @@ GrB_Info GB (_Asaxpy4B__plus_times_fp64)
             )
             {
                 #include "mxm/template/GB_AxB_saxpy5_unrolled.c"
+            }
+
+        #endif
+
+        //----------------------------------------------------------------------
+        // saxpy5 method with RISC-V vectors
+        //----------------------------------------------------------------------
+
+        #if GB_COMPILER_SUPPORTS_RVV1
+
+        #include <riscv_vector.h>
+        #define VSETVL(x) __riscv_vsetvl_e64m8(x)
+        #define VLE(x,y) __riscv_vle64_v_f64m8(x, y)
+        #define VFMACC(x,y,z,w) __riscv_vfmacc_vf_f64m8(x, y, z, w)
+        #define VSE(x,y,z) __riscv_vse64_v_f64m8(x, y, z)
+        #define VECTORTYPE vfloat64m8_t
+
+            GB_TARGET_RVV1 static inline void GB_AxB_saxpy5_unrolled_rvv
+            (
+                GrB_Matrix C,
+                const GrB_Matrix A,
+                const GrB_Matrix B,
+                const int ntasks,
+                const int nthreads,
+                const int64_t *B_slice
+            )
+            {
+                #include "mxm/template/GB_AxB_saxpy5_lv.c"
             }
 
         #endif
