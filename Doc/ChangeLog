@@ -565,7 +565,7 @@ Version 5.1.10, Oct 27, 2021
 Version 5.1.9, Oct 26, 2021
 
     * (34) bug fix: in-place test incorrect for C+=A'*B using dot4
-    * (32) bug fix: disable free pool if OpenMP not available
+    * (33) bug fix: disable free pool if OpenMP not available
 
 Version 5.1.8, Oct 5, 2021
 
