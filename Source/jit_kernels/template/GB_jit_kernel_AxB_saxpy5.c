@@ -42,7 +42,6 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
                 const int64_t *B_slice
             )
             {
-printf ("JIT saxpy5 with AVX/RVV: avx512\n") ;
                 #include "template/GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -79,7 +78,6 @@ printf ("JIT saxpy5 with AVX/RVV: avx512\n") ;
                 const int64_t *B_slice
             )
             {
-printf ("JIT saxpy5 with AVX/RVV: avx2\n") ;
                 #include "template/GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -103,7 +101,6 @@ printf ("JIT saxpy5 with AVX/RVV: avx2\n") ;
                 const int64_t *B_slice
             )
             {
-printf ("JIT saxpy5 with AVX/RVV: rvv\n") ;
                 #include "template/GB_AxB_saxpy5_lv.c"
             }
 
