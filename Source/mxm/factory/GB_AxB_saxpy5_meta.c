@@ -127,6 +127,7 @@
                     #if GB_COMPILER_SUPPORTS_AVX512F && GB_V4_512
                     if (GB_Global_cpu_features_avx512f ( ))
                     {
+printf ("factory saxpy5 with AVX/RVV: avx512\n") ;
                         // x86_64 with AVX512f
                         GB_AxB_saxpy5_unrolled_avx512f (C, A, B,
                             ntasks, nthreads, B_slice) ;
@@ -136,6 +137,7 @@
                     #if GB_COMPILER_SUPPORTS_AVX2 && GB_V4_256
                     if (GB_Global_cpu_features_avx2 ( ))
                     {
+printf ("factory saxpy5 with AVX/RVV: avx2\n") ;
                         // x86_64 with AVX2
                         GB_AxB_saxpy5_unrolled_avx2 (C, A, B,
                             ntasks, nthreads, B_slice) ;
@@ -145,6 +147,7 @@
                     #if GB_COMPILER_SUPPORTS_RVV1
                     if (GB_Global_cpu_features_rvv_1_0 ( ))
                     {
+printf ("factory saxpy5 with AVX/RVV: rvv\n") ;
                         GB_AxB_saxpy5_unrolled_rvv (C, A, B,
                             ntasks, nthreads, B_slice) ;
                         return (GrB_SUCCESS) ;
