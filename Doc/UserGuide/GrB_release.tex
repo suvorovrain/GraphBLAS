@@ -19,13 +19,14 @@
         do not trigger this error.
     \item \verb'GxB_STDC_VERSION': this is normally equal to
         \verb'__STDC_VERSION__' and is determined automatically in GraphBLAS.h.
-        If it is $\ge$ 2011012L, then C11 is being used and the polymorphic
+        If it is $\ge$ 201112L, then C11 is being used and the polymorphic
         functions (based on \verb'_Generic') are available.  It can now be
         \verb'#define'd by the user application prior to its
         \verb'#include "GraphBLAS.h"' statement.  If a C++ compiler is used to
         compile the user application then \verb'GxB_STDC_VERSION' is set to
-        199001L to denote C90 (and no \verb'_Generic' keyword is used).  See
-        \verb'GraphBLAS/Demo/Include/graphblas_demo.h' for an example usage.
+        199001L to denote C90 (and no \verb'_Generic' keyword is used).
+
+        See \verb'GraphBLAS/Demo/Include/graphblas_demo.h' for an example usage.
     \end{itemize}
 
 \item May 5, 2025: version 10.0.5

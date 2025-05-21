@@ -100,6 +100,10 @@ by SuiteSparse:GraphBLAS.
     GrB_Matrix_build (C, I, J, X, nvals, op) ;
     #endif \end{verbatim}}
 
+%===============================================================================
+\subsection{Definitions that modify how GraphBLAS.h behaves}
+%===============================================================================
+
 The GxB extensions defined by \verb'GraphBLAS.h' can be disabled
 by defining the \verb'GRAPHBLAS_VANILLA' token prior to including it:
 
@@ -113,6 +117,23 @@ macros will result in a compile-time error when compiling an application
 that uses SuiteSparse:GraphBLAS.  This flag has no effect on the compilation
 of SuiteSparse:GraphBLAS itself.  It will still include all of its GxB methods
 and its extended behavior (highlighted in yellow in this document).
+
+The GraphBLAS C API defines a set of polymorphic methods based on the
+\verb'_Generic' keyword in the C11 language.  \verb'GraphBLAS.h'
+normally defines a token \verb'GxB_STDC_VERSION', which is by default equal to
+        \verb'__STDC_VERSION__' and is determined automatically in \verb'GraphBLAS.h'.
+        If it is $\ge$ 201112L, then C11 is being used and the polymorphic
+        functions (based on \verb'_Generic') are available.  It can also be
+        \verb'#define'd by the user application prior to its
+        \verb'#include "GraphBLAS.h"' statement.  If a C++ compiler is used to
+        compile the user application then \verb'GxB_STDC_VERSION' is set to
+        199001L to denote C90 (and no \verb'_Generic' keyword is used).
+
+See \verb'GraphBLAS/Demo/Include/graphblas_demo.h' for an example usage.
+
+%===============================================================================
+\subsection{Overview of GraphBLAS initialization and finalization methods}
+%===============================================================================
 
 The remainder of this section describes GraphBLAS functions that start or
 finalize GraphBLAS, error handling, and the GraphBLAS integer.
