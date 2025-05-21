@@ -8,6 +8,15 @@ May 20, 2025: version 10.1.0
         build system has been revised so that it refuses to use gcc on a
         Power-based or s390-based system.  Use clang or the IBM xlc compiler
         instead.
+    * GxB_STDC_VERSION: this is normally equal to __STDC_VERSION__ and is
+        determined automatically in GraphBLAS.h.  If it is >= 2011012L,
+        then C11 is being used and the polymorphic functions (based on
+        _Generic) are available.  It can now be #define'd by the user
+        application prior to its '#include "GraphBLAS.h"' statement.
+        If a C++ compiler is used to compile the user application then
+        GxB_STDC_VERSION is set to 199001L to denote C90 (and no _Generic
+        keyword is used).  See GraphBLAS/Demo/Include/graphblas_demo.h
+        for an example usage.
 
 May 5, 2025: version 10.0.5
 

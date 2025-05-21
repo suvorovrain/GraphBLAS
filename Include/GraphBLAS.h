@@ -123,22 +123,38 @@
     #define GB_GLOBAL extern
 #endif
 
-// GraphBLAS requires an C11 compiler for its polymorphic functions (using
+// GraphBLAS requires a C11 compiler for its polymorphic functions (using
 // the _Generic keyword), but it can be used in an C90 compiler if those
-// functions are disabled.
+// functions are disabled.  This header file can also be used by a C++
+// compiler, for which _Generic keywords cannot be used.
 
 // With C11 and later, _Generic keyword and polymorphic functions can be
 // used.  Earlier versions of the language do not have this feature.
 
-#ifdef __STDC_VERSION__
-// C17: 201710L
-// C11: 201112L
-// C99: 199901L
-// C95: 199409L
-#define GxB_STDC_VERSION __STDC_VERSION__
-#else
-// assume C90 / C89
-#define GxB_STDC_VERSION 199001L
+// The user application may also disable the _Generic macros by #define'ing
+// GxB_STDC_VERSION to a value less then 201112 before #include'ing
+// GraphBLAS.h.
+
+#if defined ( __cplusplus )
+
+    // C++ is being used for this application; do not create any polymorphic
+    // functions.
+    #undef  GxB_STDC_VERSION
+    #define GxB_STDC_VERSION 199001L
+
+#elif (! defined ( GxB_STDC_VERSION ))
+
+    #ifdef __STDC_VERSION__
+    // C17: 201710L
+    // C11: 201112L
+    // C99: 199901L
+    // C95: 199409L
+    #define GxB_STDC_VERSION __STDC_VERSION__
+    #else
+    // assume C90 / C89
+    #define GxB_STDC_VERSION 199001L
+    #endif
+
 #endif
 
 //------------------------------------------------------------------------------
