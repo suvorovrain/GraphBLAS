@@ -336,7 +336,7 @@
 
 // prefix for function with target rvv1.0
 #if GB_COMPILER_SUPPORTS_RVV1
-        #define GB_TARGET_RVV1 __attribute__ ((target ("arch=rv64gcv")))
+        #define GB_TARGET_RVV1 __attribute__ ((target ("arch=+v")))
 #else
     #define GB_TARGET_RVV1
 #endif
