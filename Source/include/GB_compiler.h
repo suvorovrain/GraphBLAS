@@ -323,7 +323,7 @@
 #if GBRISCV64
     #if GB_COMPILER_GCC
     // TODO: add other compilers
-        #if __GNUC__ >= 13
+        #if __GNUC__ >= 14
             #define GB_COMPILER_SUPPORTS_RVV1 1
         #else
             #define GB_COMPILER_SUPPORTS_RVV1 0
